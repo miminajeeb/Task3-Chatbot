@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        h1{
+            text-align: center;
+        }
+        
+        
+        .button1 {background-color: #4CAF50;} /* Green */
+        
+        .button2 {background-color: #008CBA;} /* Blue */
+        
+        .button {
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        
+        .button2 {
+            background-color: #008CBA;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        } 
+        
+        .split {
+            height: 100%;
+            width: 50%;
+            position: absolute;
+            z-index: 1;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .left {
+          left: 0;
+        }
+
+        .right {
+          right: 0;
+        }
+
+        .centered {
+          position: absolute;
+          top: 40%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+        }
+    </style>
+        
+<title>Robot Arm Control Interface</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<body>
+    <div>
+    <?php
+       error_reporting(0);
+    // define connection variables 
+        $host = "localhost";
+        $username = "root";
+        $pwd = "";
+        $db = "robotarm";
+        $port = 3307;
+       
+   // establish connection  
+        $con = mysqli_connect($host, $username, $pwd, $db, $port);
+       
+   // if the user clicks 'Save' button
+        if(isset($_POST['save'])){
+            $deg1 = (int)$_POST['d1'];
+            $deg2 = (int)$_POST['d2'];
+            $deg3 = (int)$_POST['d3'];
+            $deg4 = (int)$_POST['d4'];
+            $deg5 = (int)$_POST['d5'];
+            $deg6 = (int)$_POST['d6'];
+       
+   // create the query
+        $query ="insert into motorsdegrees (motor1,motor2,motor3,motor4,motor5,motor6) values ('$deg1','$deg2','$deg3','$deg4','$deg5','$deg6')"; // insert into motorsdegrees table
+        $query2 = "insert into playmotors SET status = 0"; // insert into playmotors table value 0 (off) by default until the user clicks 'play'
+   // run the query
+        $result = mysqli_query($con, $query);
+        $result2 = mysqli_query($con, $query2);
+      
+     if (isset($result) and $result)
+     {
+        echo "<script>alert('Data entered successfully!')</script>";
+     }
+     else
+     {
+        echo  "<script>alert('Data is not entered successfully!')</script>";
+     }
+       
+        } // end of save button block
+        
+    // if the user clicks 'play' button
+        else if(isset($_POST['play'])){
+            $query3 = "select * from playmotors ORDER BY id DESC limit 1";
+            $result3 = mysqli_query($con, $query3);
+            $data = mysqli_fetch_row($result3);
+            $id = $data[0];
+            $state = $data[1];
+
+           // if the value is 0 (off) change it to 1 (on) to play the motors
+            if ($state == 0){
+            $query4 = "update playmotors SET status = 1 where id = $id";
+            $result4 = mysqli_query($con, $query4);
+            }
+            
+            if (isset($result4) and $result4)
+            {
+              echo "<script>alert('The motors are playing!')</script>";
+            }
+            
+            
+        } // end of play button block
+        
+        // if the user clicks 'Forward' button
+        if(isset($_POST['forward'])){
+            $querydir1 = "insert into robotdirection SET direction = 'f'"; // insert into robotdirection the direction
+            // run the query
+            $resultdir1 = mysqli_query($con, $querydir1);
+            
+                if (isset($resultdir1) and $resultdir1)
+                {
+                    echo "<script>alert('Forward Direction entered successfully!')</script>";
+                }
+        }
+        
+        // if the user clicks 'Back' button
+        if(isset($_POST['back'])){
+            $querydir2 = "insert into robotdirection SET direction = 'b'"; // insert into robotdirection the direction
+            // run the query
+            $resultdir2 = mysqli_query($con, $querydir2);
+            
+            if (isset($resultdir2) and $resultdir2)
+                {
+                    echo "<script>alert('Back Direction entered successfully!')</script>";
+                }
+        }
+        
+        // if the user clicks 'Stop' button
+        if(isset($_POST['stop'])){
+            $querydir3 = "insert into robotdirection SET direction = 's'"; // insert into robotdirection the direction
+            // run the query
+            $resultdir3 = mysqli_query($con, $querydir3);
+            
+                if (isset($resultdir3) and $resultdir3)
+                {
+                    echo "<script>alert('Stop entered successfully!')</script>";
+                }
+        }
+        
+        // if the user clicks 'Right' button
+        if(isset($_POST['right'])){
+            $querydir4 = "insert into robotdirection SET direction = 'r'"; // insert into robotdirection the direction
+            // run the query
+            $resultdir4 = mysqli_query($con, $querydir4);
+            
+                if (isset($resultdir4) and $resultdir4)
+                {
+                    echo "<script>alert('Right Direction entered successfully!')</script>";
+                }
+        }
+        
+        // if the user clicks 'Left' button
+        if(isset($_POST['left'])){
+            $querydir5 = "insert into robotdirection SET direction = 'l'"; // insert into robotdirection the direction
+            // run the query
+            $resultdir5 = mysqli_query($con, $querydir5);
+            
+                if (isset($resultdir5) and $resultdir5)
+                {
+                    echo "<script>alert('Left Direction entered successfully!')</script>";
+                }
+        }
+    ?>
+    </div>
+    
+<header class="w3-container w3-teal">
+  <h1>Robot Arm Control Interface</h1>
+</header>
+
+ <!-- left part of the page -->
+<div class="split left">
+    <div class="centered">
+        <div class="w3-container">
+    <form  action="ControlUserInterface.html" method="POST">
+    <div class="motor1">
+        <p><b>Motor 1:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m1" onchange="showValue1()">
+        <input type="text" id="d1" name="d1" size="10" value='0' readonly>
+    </div>
+    
+    <div class="motor2">
+        <p><b>Motor 2:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m2" onchange="showValue2()">
+        <input type="text" id="d2" name="d2" size="10" value='0' readonly>
+    </div>
+    
+    <div class="motor3">
+        <p><b>Motor 3:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m3" onchange="showValue3()">
+        <input type="text" id="d3" name="d3" size="10" value='0' readonly>
+    </div>
+    
+    <div class="motor4">
+        <p><b>Motor 4:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m4" onchange="showValue4()">
+        <input type="text" id="d4" name="d4" size="10" value='0' readonly>
+    </div>
+    
+    <div class="motor5">
+        <p><b>Motor 5:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m5" onchange="showValue5()">
+        <input type="text" id="d5" name="d5" size="10" value='0' readonly>
+    </div>
+    
+    <div class="motor6">
+        <p><b>Motor 6:</b></p> 
+        <input type="range" min="0" max="180" value="0" class="slider" id="m6" onchange="showValue6()">
+        <input type="text" id="d6" name="d6" size="10" value='0' readonly>
+    </div>
+        
+    <br><br>
+    
+    <button type="submit" class="button button1" name="save">Save</button>
+    <button type="submit" class="button button2" name="play">Play</button>
+
+    </form>
+        </div>
+    </div>
+</div>
+    
+<!-- Right part of the page-->
+<div class="split right">
+    <div class="centered">
+         <form  action="ControlUserInterface.html" method="POST">
+           <button type="submit" class="button2" name="forward">Forward</button> <br><br>
+           <button type="submit" class="button2" name="left">Left</button>&nbsp &nbsp;	
+           <button type="submit" class="button2" name="stop">Stop</button>&nbsp &nbsp;	
+           <button type="submit" class="button2" name="right">Right</button><br><br>
+           <button type="submit" class="button2" name="back">Back</button>
+         </form>
+    </div>
+</div>
+    
+    
+    
+   
+   <!-- change the values of the textboxes according to the values of the sliders --> 
+    <script>
+        function showValue1()
+        {
+        document.getElementById("d1").value= document.getElementById("m1").value;
+        }
+        
+        function showValue2()
+        {
+        document.getElementById("d2").value= document.getElementById("m2").value;        }
+        
+        function showValue3(newValue)
+        {
+        document.getElementById("d3").value= document.getElementById("m3").value;
+        }
+        
+        function showValue4(newValue)
+        {
+        document.getElementById("d4").value= document.getElementById("m4").value;
+        }
+        
+        function showValue5(newValue)
+        {
+        document.getElementById("d5").value= document.getElementById("m5").value;
+        }
+        
+        function showValue6(newValue)
+        {
+        document.getElementById("d6").value= document.getElementById("m6").value;
+        }
+    </script>
+    
+    <script>
+  window.watsonAssistantChatOptions = {
+      integrationID: "e7fbb576-c120-4d30-a44b-66f729349763", // The ID of this integration.
+      region: "eu-gb", // The region your integration is hosted in.
+      serviceInstanceID: "31acf83a-9d5c-46fd-808e-474cdf4ac8f0", // The ID of your service instance.
+      onLoad: function(instance) { instance.render(); }
+    };
+  setTimeout(function(){
+    const t=document.createElement('script');
+    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/loadWatsonAssistantChat.js";
+    document.head.appendChild(t);
+  });
+    </script>
+
+</body>
+</html> 
